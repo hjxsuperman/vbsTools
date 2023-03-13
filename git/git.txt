@@ -1,0 +1,5 @@
+git config --global user.name，，查看/设置 用户名
+git config --global user.password，，查看/设置 密码
+git config --global user.email，1548429568@qq.com，查看/设置邮箱
+git config --global user.email，，查看/设置邮箱
+git config ，--list，查看配置信息

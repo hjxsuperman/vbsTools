@@ -1,0 +1,12 @@
+git config --global， user.name "youname",定义全局用户名
+git config --global， user.email "email"，定义全局邮箱
+mkdir ，仓库名，创建本地仓库目录
+cd ，仓库名，进入本地仓库目录
+git ，init，初始化本地git仓库
+echo >，README.md，创建ReadMe文件
+git add， README.md，把ReadMe文件提交到缓存区
+git status，，查看缓存区状态
+git commit， -m "年轻人要讲武德"，文件提交到本地仓库
+git remote add, origin https://gitee.com/唯一账号名/仓库名.git,添加一个名叫origin的远程仓库地址到本地
+git remote ，-v，查看远程仓库信息
+git push， -u origin "master"，提交到origin记录的地址master仓库进行提交

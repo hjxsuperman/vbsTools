@@ -1,0 +1,2 @@
+npm，run serve，启动Vue网页
+node，app.js，启动node服务器

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<Title>快捷Dos命令</Title>
+		<HTA:Application
+		Icon = "conf/logo.ico"
+		Caption = Yes
+		Border = Thick
+		Scroll = Yes
+		sysMenu=Yes
+		navigable:Yes
+		ShowInTaskBar = Yes
+		MaximizeButton = Yes
+		MinimizeButton = Yes>
+		<style type="text/css">
+			body{
+				background:#c7d2d4;
+			}
+			ul {
+				list-style-type: none;
+
+			}
+			#main {
+				padding: 0;
+				overflow: hidden;
+			}
+
+			#main>li {
+				text-align: center;
+				border: 1px solid black;
+				cursor: pointer;
+				float: left;
+				height:50px;
+				line-height:50px;
+				width: 24%;
+			}
+
+			#main>li:hover {
+				background-color: cornsilk;
+			}
+			.inputButton{
+				margin:0 0 0 10px;
+			}
+			table{
+				margin: 0 auto;
+			}
+			table tbody{
+				padding:10px 0;
+				text-align: center;
+			}
+			table tr>td,table tr>th{
+				width: 300px;
+			}
+			table tr>th{
+				background-color: bisque;
+			}
+			table tr>td{
+				color: white;
+				background-color: lightslategray;
+			}
+			
+			.list>span{
+				background-color:red;
+				display:block;
+				width:40px;
+				height:40px;
+				border-radius:50px;
+				text-align: center;
+				line-height:40px;
+				float:left;
+				margin:0 5px;
+			}
+			.select{
+				width:350px;
+				margin:10px auto 0;
+				overflow:hidden;
+			}
+			.btn{
+				padding:7px 10px;
+				background:#12aa9c;
+				color:#eed045;
+				font-weight:600;
+				border-color:#bacf65;
+			}
+			.btn1{
+				background:#12aa9c;
+				color:#ffffff;
+				border-color:#bacf65;
+				padding:0px 10px;
+			}
+			.btn1:hover,.btn:hover{
+				cursor: pointer;
+				background:lawngreen;
+				color:white;
+				border-color:#bacf65;
+			}
+			.text{
+				border:none;
+				border:3px solid #f8df72;
+				background-color:#eed045;
+			}
+			.text:hover{
+				border:3px solid #f1f0ed;
+				background-color:#fffefa;
+			}
+			.linkTo:hover{
+				color:white
+			}
+			.select>*{
+				float:left;
+				margin:0 10px;
+				line-height:40px;
+				cursor: pointer;
+			}
+			.input{
+				display:block;
+				background:none;
+				border:none;
+				color:aqua;
+				outline:none;
+				
+				font-weight:900;
+				font-size:20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+		<div>
+		当前执行路径：<input type="text" class="text" id="exePath"  />
+		<button class="inputButton btn1" onclick="updataInputValue()">打开</button>
+		<button class="inputButton btn1" onclick="resetInputValue()">复原</button>
+		<input type="text" class="text" id="inputValue"  />
+		<button class="inputButton btn1" onclick="addRow()">追加一行</button>
+		<input id="file" type="file" accept=".txt" style="display:none;" />
+		<button class="inputButton btn1" onclick="setOriginData()">指定数据源</button>
+		<select id="execPathFast">
+		</select>
+		<button class="inputButton btn1" onclick="updateInputValueByBtn()">更改执行路径</button>
+		<button class="inputButton btn1"  id="adminMode" onclick="adminMode()">启动管理员模式</button>
+		</div>
+		<ul id="main">
+				<li onclick="Show(2)">全局配置</li>
+				<li onclick="Show(1)">远程节点</li>
+				<li>查看分支</li>
+				<li>本地文件查看</li>
+		</ul>
+		<div id="content1">
+			<div style:"height:800px;">
+			<table id="table1" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<th>命令头</th>
+					<th>命令值</th>
+					<th>注释</th>
+					<th>操作</th>
+				<tr>
+			</table></div>
+			<div class="select">
+				<div class="linkTo" onclick="xsClick(1,true)">上一页</div>
+				<div class="list" id="svg1"></div>
+				<div class="linkTo" onclick="xsClick(1,false)">下一页</div>
+			</div>
+		</div>
+		<div id="content2" style="display:none;">
+			<table id="table2" border="1" cellspacing="0" cellpadding="0">
+				<tr>
+					<th>属性</th>
+					<th>元素值</th>
+					<th>操作</th>
+				<tr>
+			</table>
+			<div class="select" id="linkSelect">
+				<div class="linkTo" id="linkSelect_link" onclick="xsClick(2,true)">上一页</div>
+				<div class="list" id="svg2"></div>
+				<div class="linkTo" onclick="xsClick(2,false)">下一页</div>
+			</div>
+		</div>
+		</div>
+	</body>
+	<script language="vbscript">
+		Dim content,mydata,dataName,currentIndex,currentPageIndex,currentPageSize,pageSize
+		rem 内容，数据源，追加一行的数据，当前数据序号，当前页面序号，当前页面的总条数，当前页面的页数
+		content=array("data/1.txt","data/2.txt")	rem contentid页面标签的数量
+		pageSize=5
+		selectPath="conf/execPathData.txt"
+		Dim contentState rem 页面初始化状态
+		rem window加载事件
+			Sub Window_onLoad
+				contentState=createArr(2,false)
+				currentIndex=1
+				Dom("#exePath").value=CMD("chdir")
+				initSelect(selectPath)
+				Show(currentIndex)
+				loadInput()
+				link()
+				InsertColInBtn Dom("#table"+CStr(currentIndex)),"clickName","执行"
+			End Sub
+			Function ss
+				MsgBox "ok"
+			end Function
+		rem Windows事件区
+			Sub Load(tableName,svgName,pageSize) rem 视图第一次加载，获取数据
+				dim index
+				index=Int(Mid(tableName,len(tableName)))
+				if contentState(index-1)=False then
+					Reload index
+					currentPageSize=Int((UBound(mydata)+1)/pageSize)
+					if((UBound(mydata)+1) mod pageSize)>0 then
+						currentPageSize=currentPageSize+1
+					end if
+					Dim number
+					number=TableDataF(Dom(tableName),mydata,"，",pageSize,1) rem 分页数据
+					for i=0 to number-1
+						Dom(svgName).appendChild CreateNewEle("span",array("onclick listClick("+CStr(index)+","+CStr(i+1)+")"),CStr(i+1))
+					Next 
+					contentState(index-1)=True
+				End if
+			end Sub
+		rem 一般方法处理
+			rem 页面重载
+			Sub Reload(index)
+				dim value
+				value=getMyTxt(index)
+				dataName=getMyCheckTxt(index)
+				value=Dom("#exePath").value+"\"+Replace(value,"/","\",1)
+				mydata=GetData(value).items
+				if UBound(mydata)=-1 then
+					MsgBox "数据未找到"
+				end if
+			end Sub
+			rem 按全局变量content获取文件相对路径
+			Function getMyTxt(index)
+				getMyTxt=content(index-1)
+			End Function
+			rem 按全局变量content获取文件名
+			Function getMyCheckTxt(index)
+				dim txt
+				txt=StrSplit(getMyTxt(index),"/")
+				getMyCheckTxt=txt(UBound(txt))
+			End Function
+			rem 按照路径替换全局变量content
+			Function setFilePathAndContent(abFilePath)
+				dim txt
+				txt=StrSplit(abFilePath,"\")
+				content(currentIndex-1)=txt(UBound(txt))
+				redim preserve txt (UBound(txt)-1)
+				setFilePathAndContent=Join(txt,"\")
+			end Function
+			rem 更换颜色
+			Sub setSubColor(eleName,index,nomalColArr,newColArr)	
+				for each i in Dom(eleName).children
+					i.style.color=nomalColArr(0)
+					i.style.background=nomalColArr(1)
+				Next
+				Dom(eleName).children(index-1).style.color=newColArr(0)
+				Dom(eleName).children(index-1).style.background=newColArr(1)
+			end Sub
+			rem Select路径设置
+			Sub initSelect(selectPath)
+				dim selectDom
+				set selectDom=Dom("#execPathFast")
+				for each i in GetData(selectPath).items
+					dim temp
+					temp=StrSplit(i,"，")
+					'PrintAll(temp)
+					if UBound(temp)>=1 then
+						selectDom.appendChild(CreateEle("option",array("value "+Replace(temp(0),"/","\",1)),temp(1)))
+					else
+						selectDom.appendChild(CreateEle("option",array("value "+Replace(temp(0),"/","\",1)),temp(0)))
+					end if
+				Next
+			end Sub
+			rem 设置独特一列
+			Sub set2Col(tableEle)
+				dim colParentList,colCount
+				if LCase(tableEle.children(0).TagName)="tbody" then
+					tableEle=tableEle.children(0)
+				end if
+				colCount=tableEle.children.length
+				for i=1 to colCount
+					tableEle.children(i).children(1).innerHTML="<input type='text' value='8888' />"
+				Next
+			end Sub
+		rem 事件
+			rem 显示视图
+			Sub Show(index)	
+				dim newIdFix,oldIdFix
+				for i=1 to UBound(content)+1
+					Display "#content"+CStr(i),False
+				Next
+				newIdFix="#content"+CStr(index)
+				Display newIdFix,True
+				currentIndex=index
+				currentPageIndex=1
+				Load "#table"+CStr(index),"#svg"+CStr(index),pageSize
+				setSubColor "#svg"+CStr(index),1,array("black","#ccc"),array("white","#12aa9c")
+				Reload index
+			End Sub
+			rem 页面序号单击事件
+			Sub listClick(number,index)	
+				setSubColor "#svg"+CStr(number),index,array("black","#ccc"),array("white","#12aa9c")
+				TableDataF Dom("#table"+CStr(number)),mydata,"，",pageSize,index rem 分页数据
+				loadInput()
+				link()
+				InsertColInBtn Dom("#table"+CStr(number)),"clickName","执行"
+			End Sub
+			rem 点击序号的修正
+			Sub xsClick(number,flag)	
+				dim cc
+				cc=currentPageIndex
+				if flag=False then
+					if Not cc>=currentPageSize then
+						currentPageIndex=currentPageIndex+1
+						cc=currentPageIndex
+						listClick number,cc
+					end if
+				else
+					if Not cc<=1 then
+						currentPageIndex=currentPageIndex-1
+						cc=currentPageIndex
+						listClick number,cc
+					end if
+				end if
+			end Sub
+			rem 修改执行路径路径
+			Sub updataInputValue()
+				dim val
+				val=SelectFolder()
+				if Not val="" then
+					Dom("#exePath").value=val
+				end if
+			end Sub
+			rem 重新设置初始路径
+			Sub resetInputValue()
+				Dom("#exePath").value=cmd("chdir")
+			end Sub
+			rem 追加一行数据在内容里面
+			Sub addRow()
+				cmdF("echo "+Dom("#inputValue").value+">> "+Dom("#exePath").value+"\"+dataName)
+				Show(currentIndex)
+			end Sub
+			rem 执行按钮事件
+			Sub clickName(index)
+				set tableEle=Dom("#table"+CStr(currentIndex))
+				if LCase(tableEle.children(0).TagName)="tbody" then
+					set tableEle=tableEle.children(0)
+				end if
+				dim val1,val2
+				val1=tableEle.children(index).children(0).InnerText
+				val2=tableEle.children(index).children(1).InnerText
+				var3=tableEle.children(index).children(2).InnerText
+				dim flag
+				if Left(var3,2)="启动" then
+					flag=true
+				else
+					flag=false
+				end if
+				if Dom("#adminMode").innerText="启动管理员模式" then
+					MsgBox CmdP("title="+var3+" & "+val1+" "+val2,Dom("#exePath").value,flag)
+				else
+					set shel=new ShellL
+					shel.exec "title="+var3+" & "+val1+" "+val2,Dom("#exePath").value
+				end if
+				
+			end Sub
+			rem 执行按钮数据初始化
+			Sub setOriginData
+				Dom("#file").click()
+				Dom("#exePath").value=setFilePathAndContent(Dom("#file").value)
+				contentState(currentIndex-1)=False
+				Dom("#svg"+CStr(currentIndex)).innerHTML=""
+				Show(currentIndex)
+				loadInput()
+				link()
+				InsertColInBtn Dom("#table"+CStr(currentIndex)),"clickName","执行"
+			End Sub
+			rem 执行更改文件路径的select选项
+			Sub updateInputValueByBtn
+				set iof=New Io
+				dim dirPath
+				dirPath=Dom("#execPathFast").value
+				if iof.ExistsDir(dirPath) then
+					Dom("#exePath").value=dirPath
+				else
+					MsgBox "目录不存在"
+				end if
+				
+			end Sub
+			rem 更改权限
+			Sub adminMode
+				if Dom("#adminMode").innerText="启动管理员模式" then
+					Dom("#adminMode").innerText="关闭管理员模式"
+					Dom("#adminMode").style.backgroundColor="red"
+				else
+					Dom("#adminMode").innerText="启动管理员模式"
+					Dom("#adminMode").style.backgroundColor="#12aa9c"
+				End if
+				
+			End Sub
+	</script>
+	<script language="vbscript" src="vbscript/tools.vbs"></script>
+	<script language="javascript">
+		function loadInput(){
+			var mytable=document.getElementById("table1")
+			if(table1.children[0].tagName=="TBODY"){
+				mytable=mytable.children[0]
+			}
+			for(var i=1;i<mytable.children.length;i++){
+				mytable.children[i].children[1].ondblclick=function(){
+					var parentEle=mytable.children[0].children[1]
+					var parentText=parentEle.innerText
+					parentEle.innerText="当前正在编辑"
+					parentEle.style.color="red"
+					var text=this.innerText
+					if(this.children.length==0){
+						this.innerHTML="<div contenteditable='true' class='input'></div>"
+						this.children[0].focus()
+						this.children[0].innerText=text
+						this.children[0].onblur=function(){
+							parentEle.innerText=parentText
+							parentEle.style.color="black"
+							this.parentElement.innerHTML=this.innerText==""?text:this.innerText
+						}
+					}else{
+						parentEle.innerText=parentText
+						parentEle.style.color="black"
+						this.innerHTML=this.children[0].innerText
+					}
+				}
+				
+			}
+		}
+		function link(){
+			document.getElementById('linkSelect').width=document.getElementById('linkSelect_link').clientWidth*2+document.getElementById('svg2').clientWidth+1000
+		}
+	</script>
+</html>

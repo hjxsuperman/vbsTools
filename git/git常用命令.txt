@@ -1,0 +1,24 @@
+git init，，初始化git目录
+git add，1.txt，添加文件到缓存区
+git status，，查看仓库当前状态
+git commit -m，"马老师提交文件了"，把文件提交到仓库
+git commit -am，"马老师提交文件了"，可以不经过add把文件提交到仓库
+git remote add，origin git@github.com:yourname/youremail.git，关联origin远程仓库
+git push -u，origin master，提交内容到origin地址给master分支
+git push --force，origin master，强行提交内容到origin地址给master分支
+git pull，origin master，拉取origin仓库下的master分支
+git fetch，origin，拉取最新的origin分支数据
+git clone，https://gitee.com/hu_jiaxing/FastApi.git,克隆git项目文件
+git blame，readme.md，查看修改记录
+git merge，origin/master，把数据合并到master分支
+git mv，old.txt new.txt，重命名
+git rm，1.txt，删工作区与暂存区
+git rm -f，1.txt ，强制删除
+git rm --cached,1.txt，只在暂存区中删
+git rm –r，*，递归删
+git remote，-v，查看远程推送地址/查看远程仓库信息
+git remote，&:show  &:rm origin，查看origin仓库/删除origin仓库
+git remote rename，oldname new_name，修改仓库名
+git log，&:--oneline &:--reverse &:--author=Linus ，查看提交历史/查看提交历史简洁版/逆向查看/指定用户查看
+git log，&:--before={3.weeks.ago} &:--after={2010-04-18} &:--no-merges，查看3周前——4月8日并以隐藏合并提交以后的提交显示
+git reset，HEAD^，回退上个版本 

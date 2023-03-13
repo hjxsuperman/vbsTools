@@ -1,0 +1,6 @@
+git branch，，列出本地的分支/创建分支
+git checkout，master，切换分支
+git checkout -b ，newtest，创建newtest分支并切换
+git branch -d，newtest，删除newtest分支
+git merge，，合并分支
+git diff，，查看冲突

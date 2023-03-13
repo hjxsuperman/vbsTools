@@ -1,0 +1,2 @@
+git config --global --unset ，http.proxy，不设置http代理
+ssh-keygen，-t rsa -b 4096 -C "你的邮件地址"，启动生成ssh秘钥(t:type类型、b:size大小、C:comment注释)

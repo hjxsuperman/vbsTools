@@ -1,0 +1,10 @@
+echo，123，打印123
+echo 1 >>，1.txt，追加数据
+git config，user.name，查看全局姓名
+git config，user.email，查看全局
+git branch，，显示所有本地分支
+echo，11，测试
+echo，11，测试
+echo，123，打印1231
+npm，run serve，启动项目
+node，app.js,启动node服务

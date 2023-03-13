@@ -1,0 +1,5 @@
+git config --global user.name，"myname"，全局姓名修改
+git config --global user.email，"myEmail"，全局邮箱修改
+git config --global user.name，，查看全局姓名
+git config --global user.email，，查看全局
+
